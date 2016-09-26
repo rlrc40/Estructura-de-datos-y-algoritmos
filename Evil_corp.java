@@ -5,8 +5,6 @@ import java.io.IOException;
 
 public class Evil_corp {
 
-	// Declaracion de variables globales
-
 	// Permutación directa
 
 	final static int[] vPR = new int[] { 65, 54, 19, 98, 168, 33, 110, 187, 244, 22, 204, 4, 127, 100, 232, 93, 30, 242,
@@ -54,33 +52,42 @@ public class Evil_corp {
 
 	public static void main(String args[]) {
 
-		String a = "123456789123456789123456789123456789123456789123456789123456amo7891234567891234567891234567891234567amo891234567891234567891234567891234amo56789123456789";
+		//fichero a leer
 		File file = new File("prueba1.mbx");
-
-		leerFichero(file);
-
-		for (int num_clave = 0; num_clave < 4; num_clave++) {
-			String frase = "amo";// Frase a desenencriptar
-
-			int[] ascii = new int[3];
-			// Cogemos la cadena de caracteres y la pasaos a un array con sus
-			// correspondientes valores en la tabla ascii
-
-
-			ofuscar(leerFichero(file), num_clave);
-			String cadena = "";
-			// Convertimos de nuevo a su corresondiente carcter en la tabla
-			// ascii
-			for (int k = 0; k < ascii.length; k++) {
-				cadena = cadena + (char) ascii[k];
+		
+		//Cadena a buscar
+		String cadena = "extre";
+		
+		//Pasamos la cadena a un array de shorts
+		short [] cad = null;
+		cad = toShort(cadena, cad);
+		
+		//Array de shorts en el que almacenamos la informacion del fichero en enteros.
+		short [] fichero = leerFichero(file);
+		
+		//Repetimos el proceso de ofuscar tantas veces como claves queramos usar
+		for (int num_clave = 0; num_clave < 65536; num_clave++) {
+			ofuscar(fichero, num_clave);
+			int band = 0;
+			for (int i = 0; i < fichero.length; i++) {
+				//for (int j = 0; j < fichero.length; j++) {
+					if (fichero[i] == cad[band]) {
+						//i++;
+						band++;
+						if (band==4) {
+							System.out.println("extre");
+							band = 0;
+						}
+						
+					}else{
+						band = 0;
+					}
+				//}
 			}
-
+			//System.out.println(num_clave);
 		}
-		do {
-			int i = a.indexOf("amo");
-			System.out.println(a.substring((i - 10), (i + 10)));
-			a = a.substring((i + 3));
-		} while (a.contains("amo"));
+		
+		
 
 	}
 
@@ -102,13 +109,13 @@ public class Evil_corp {
 			b = vPI[b]; // System.out.println(b);
 			b = (b - w0 + 256) % 256; // System.out.println(b);
 			txt[i] = (short) b; // System.out.println(txt[i]);
-			System.out.println(txt[i]);
+			//System.out.println(txt[i]);
 			clave = (clave + 1) % 65536; // System.out.println(clave + " pene");
 		}
 
 	}
 
-	public static short[] leerFichero(File file) {
+	public static short [] leerFichero(File file) {
 		System.out.println("Reading binary file into byte array example");
 		DataInputStream insputStream = null;
 		short[] shorts = null ;
@@ -141,4 +148,13 @@ public class Evil_corp {
 		}
 		return shorts;
 	}
-}
+	
+	public static short [] toShort(String cadena, short [] cad){
+		cad = new short [cadena.length()];
+		//Convertimos la cadena a enteros
+		for (int i = 0; i < cadena.length(); i++) {
+			cad [i] = (short)(cadena.charAt(i));
+			System.out.println(cad[i]);
+		}
+		return cad;
+	}
