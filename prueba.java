@@ -7,8 +7,11 @@ import java.io.IOException;
 
 public class prueba {
 
+	//Constantes globales
+	final static String cadena = "extremista@gmail.com";//Cadena a buscar
+	final static String rutaFichOrigen = "prueba1.mbx";//Ruta al fichero de origen
+	
 	// Permutación directa
-
 	final static int[] vPR = new int[] { 65, 54, 19, 98, 168, 33, 110, 187, 244, 22, 204, 4, 127, 100, 232, 93, 30, 242,
 			203, 42, 116, 197, 94, 53, 210, 149, 71, 158, 150, 45, 154, 136, 76, 125, 132, 63, 219, 172, 49, 182, 72,
 			95, 246, 196, 216, 57, 139, 231, 35, 59, 56, 142, 200, 193, 223, 37, 177, 32, 165, 70, 96, 78, 156, 251,
@@ -23,7 +26,6 @@ public class prueba {
 			47, 181, 208, 218, 61 };
 
 	// Permutación inversa vPR[vPI[i]] = i, vPI[vPR[i]] = i
-
 	final static int[] vPI = new int[] { 71, 241, 180, 230, 11, 106, 114, 72, 133, 78, 158, 235, 226, 248, 148, 83, 224,
 			187, 160, 2, 232, 90, 9, 171, 219, 227, 186, 198, 124, 195, 16, 221, 57, 5, 150, 48, 245, 55, 96, 130, 140,
 			201, 19, 74, 107, 29, 243, 251, 143, 38, 151, 202, 145, 23, 1, 196, 50, 45, 110, 49, 149, 255, 217, 35, 209,
@@ -38,7 +40,6 @@ public class prueba {
 			108, 249, 236 };
 
 	// Autopermutación vPS[vPS[i]] = i
-
 	final static int[] vPS = new int[] { 20, 83, 15, 86, 179, 200, 122, 156, 235, 101, 72, 23, 22, 21, 159, 2, 204, 84,
 			124, 131, 0, 13, 12, 11, 162, 98, 168, 118, 219, 217, 237, 199, 197, 164, 220, 172, 133, 116, 214, 208, 167,
 			155, 174, 154, 150, 113, 102, 195, 99, 153, 184, 221, 115, 146, 142, 132, 125, 165, 94, 209, 93, 147, 177,
@@ -54,75 +55,78 @@ public class prueba {
 
 	public static void main(String args[]) {
 		
-		String rutaFichOrigen = "prueba1.mbx";//Ruta al fichero de origen
-//        String rutaFichDestino = "salida.txt"; //Ruta al fichero de destino
+		
         File ficheroOrigen = new File(rutaFichOrigen);//Creamos objeto de tipo fichero con la ruta orig
+		short [] fichero =  leerFichero(ficheroOrigen);
+        
+		short [] cadenaShort = null; //Cadena a buscar
+        cadenaShort = toShort(cadena, cadenaShort);
 		
-        
-        
-        short [] fichero =  leerFichero(ficheroOrigen);
-        
-      //Cadena a buscar
-      	String cadena = "evil.corp@mad.org";
-        short [] cad = null;
-		cad = toShort(cadena, cad);
-		
-        
-      //Repetimos el proceso de ofuscar tantas veces como claves queramos usar
-      		for (int num_clave = 0; num_clave < 66000; num_clave++) {
-      			ofuscar(fichero, num_clave);
-      			int band = 0;
-      			for (int i = 0; i < fichero.length; i++) {
-      					if (fichero[i] == cad[band]) {
-      						//System.out.println(num_clave +" "+ (char)fichero[i]);
-      						band++;
-      						if (band==cad.length) {
-									System.out.print("Vaca puto amo");
-      							band = 0;
-      						}
-      						
-      					}else{
-      						band = 0;
-      					}
-      			}
-      			ofuscar(fichero, num_clave);
-//      			System.out.println(num_clave);
-      		}
+        buscarCadena(fichero,cadenaShort);
+      
     }
-			    
+		
 	
+	
+	
+	
+	
+	public static void buscarCadena(short[] fichero, short[] cadenaShort){
+		//Busca la cadena que se le pasa en el fichero e imprime
+	    int bandera; //Indicara cuando se ha alcanzado el ultimo indice de la cadena.
+  		for (int num_clave = 0; num_clave < 65536; num_clave++) {
+  			//Desofuscamos el fichero con la clave num_clave
+  			ofuscar(fichero, num_clave);
+  			bandera = 0;
+  			//Vamos recorriendo el fichero buscando en orden cada caracter de la cadena a buscar
+  			for (int i = 0; i < fichero.length; i++) {
+  					if (fichero[i] == cadenaShort[bandera]) {
+  						bandera++;
+  						if (bandera==cadenaShort.length) {
+  							System.out.println("Posición: " + i + "  Clave: " + num_clave);
+							for (int j = i-100; j < i+500; j++) {
+								if(j >= 0 && j < fichero.length){
+									System.out.print((char)fichero[j]);
+								}
+							}
+							System.out.println();
+							bandera = 0;
+  						}
+  						
+  					}else{
+  						bandera = 0;
+  					}
+  			}
+  			ofuscar(fichero, num_clave);
+
+  		}
+	}
 
 	public static short [] leerFichero(File file) {
-
-        short [] cad = new short[(int) file.length()] ;
-//        File ficheroDestino=new File(rutaFichDestino);//Creamos objeto de tipo fichero con la ruta destino.
+		//Lee el fichero introducido por parametro y lo almacena en un array de shorts
+        short [] cadena = new short[(int) file.length()] ;
         BufferedInputStream lectorFichero;//Creo un objeto flujo buffer de lectura .
-//        BufferedOutputStream escritorFichero;//Creo un objeto flujo buffer de escritura.
         try{
-            lectorFichero=new BufferedInputStream(new FileInputStream(file));//Inicializa el buffer de lectura con un objeto de tipo FileInputStream(Flujo de entrada a fichero).
-//            escritorFichero=new BufferedOutputStream(new FileOutputStream(ficheroDestino));//Inicializa el buffer de escritura con un objeto de tipo FileOutputStream( flujo de salida a fichero).
-            int bytes;//variable ke ira conteniendo el byte a copiar en cada momento.
+            lectorFichero=new BufferedInputStream(new FileInputStream(file));//Inicializa el buffer de lectura con un objeto de tipo FileInputStream
+            int bytes;
 
             	for (int i = 0; i < file.length(); i++) {
             		bytes = lectorFichero.read();
-            		//System.out.print((char)bytes);//se imprime el byte a copiar convertido a caracter por consola(no tiene sentido)
-//                    escritorFichero.write(bytes);//se copia el flujo de bytes al fichero destino.
-                    cad[i] = (short)bytes;	
+                    cadena[i] = (short)bytes;	
                 
             	}
            
             lectorFichero.close();//cerramos el lector
-//            escritorFichero.close();//cerramos el escritor
+
            
         }
         catch(FileNotFoundException e){
             e.printStackTrace();//traza de excepcion
-           
         }
         catch(IOException e){
             e.printStackTrace();//traza de excepcion
         }
-		return cad;
+		return cadena;
 	}
 	
 	public static short [] toShort(String cadena, short [] cad){
@@ -130,30 +134,26 @@ public class prueba {
 		//Convertimos la cadena a enteros
 		for (int i = 0; i < cadena.length(); i++) {
 			cad [i] = (short)(cadena.charAt(i));
-			//System.out.println(cad[i]);
 		}
 		return cad;
 }
 	public static void ofuscar(short[] txt, int clave) {
-		// Función que encripta y desencripta
+		//Algoritmo que ofusca/desofusca el vector de enters introducido
 
 		for (int i = 0; i < txt.length-1; i++) { // Recorre el vector txt
 			int w0, w1, b;
 			w0 = clave % 256; // Almacenamos en w0 el resto de (clave / 256).
-			// System.out.println(w0 + " w0");
 			w1 = clave / 256; // Almacenamos en w1 la division de (clave / 256).
-			// System.out.println(w1 + " w1");
-			b = txt[i]; // System.out.println(b);
-			b = (b + w0) % 256; // System.out.println(b);
-			b = vPR[b]; // System.out.println(b);
-			b = (b + w1) % 256; // System.out.println(b);
-			b = vPS[b]; // System.out.println(b);
-			b = (b - w1 + 256) % 256; // System.out.println(b);
-			b = vPI[b]; // System.out.println(b);
-			b = (b - w0 + 256) % 256; // System.out.println(b);
-			txt[i] = (short) b; // System.out.println(txt[i]);
-			//System.out.print((char)txt[i]);
-			clave = (clave + 1) % 65536; // System.out.println(clave + " pene");
+			b = txt[i];
+			b = (b + w0) % 256;
+			b = vPR[b];
+			b = (b + w1) % 256;
+			b = vPS[b];
+			b = (b - w1 + 256) % 256;
+			b = vPI[b]; 
+			b = (b - w0 + 256) % 256; 
+			txt[i] = (short) b; 
+			clave = (clave + 1) % 65536; 
 		}
 
 	}
