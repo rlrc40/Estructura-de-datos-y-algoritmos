@@ -6,10 +6,9 @@ import java.io.IOException;
 
 
 public class prueba {
-
-	//Constantes globales
+//Constantes globales
 	final static String cadena = "extremista@gmail.com";//Cadena a buscar
-	final static String rutaFichOrigen = "prueba1.mbx";//Ruta al fichero de origen
+	final static String rutaFichOrigen = "prueba3.mbx";//Ruta al fichero de origen
 	
 	// Permutación directa
 	final static int[] vPR = new int[] { 65, 54, 19, 98, 168, 33, 110, 187, 244, 22, 204, 4, 127, 100, 232, 93, 30, 242,
@@ -55,7 +54,6 @@ public class prueba {
 
 	public static void main(String args[]) {
 		
-		
         File ficheroOrigen = new File(rutaFichOrigen);//Creamos objeto de tipo fichero con la ruta orig
 		short [] fichero =  leerFichero(ficheroOrigen);
         
@@ -64,61 +62,59 @@ public class prueba {
 		
         buscarCadena(fichero,cadenaShort);
       
-    }
-		
-	
-	
-	
-	
+    	}
 	
 	public static void buscarCadena(short[] fichero, short[] cadenaShort){
-		//Busca la cadena que se le pasa en el fichero e imprime
-	    int bandera; //Indicara cuando se ha alcanzado el ultimo indice de la cadena.
+		
+		// Recibe dos array de shorts y busca la secuencia del 2º en el 1º
+	    int bandera; // Se declara una bandera para controlar el indice del 2º array
   		for (int num_clave = 0; num_clave < 65536; num_clave++) {
-  			//Desofuscamos el fichero con la clave num_clave
+  			// Desofuscamos el array del fichero con la clave num_clave
   			ofuscar(fichero, num_clave);
+  			// Establecemos la bandera a cero cada vez que se cambia de clave
   			bandera = 0;
-  			//Vamos recorriendo el fichero buscando en orden cada caracter de la cadena a buscar
+  			// Vamos recorriendo el array del fichero buscando en orden cada caracter de la cadena a buscar
   			for (int i = 0; i < fichero.length; i++) {
-  					if (fichero[i] == cadenaShort[bandera]) {
-  						bandera++;
-  						if (bandera==cadenaShort.length) {
-  							System.out.println("Posición: " + i + "  Clave: " + num_clave);
-							for (int j = i-100; j < i+500; j++) {
-								if(j >= 0 && j < fichero.length){
-									System.out.print((char)fichero[j]);
-								}
+  				// Si fichero[i] == cadenaShort[bandera], incrementamos la bandera para buscar el siguiente short del 2º array
+  				if (fichero[i] == cadenaShort[bandera]) {
+  					bandera++;
+  					// Si la bandera ya corresponde al ultimo short del 2º array devolvemos la posicion y la clave actuales, 
+  					// y traducimos e imprimimos la cadena correspondiente, desde la posicion -100 hasta la posicion +500
+  					if (bandera==cadenaShort.length) {
+  						System.out.println("Posición: " + (i - bandera + 1) + "  Clave: " + num_clave);
+						for (int j = i-100; j < i+500; j++) {
+							// Comprobamos que la cadena a mostrar este dentro de un rango valido
+							if(j >= 0 && j < fichero.length){
+								System.out.print((char)fichero[j]);
 							}
-							System.out.println();
-							bandera = 0;
-  						}
-  						
-  					}else{
-  						bandera = 0;
-  					}
+						}
+						System.out.println();
+						// Reiniciamos la bandera para seguir buscando
+						bandera = 0;
+  					}	
+  				}else{
+  					// Si no se a encontrado el correspondiente short reiniciamos la bandera para que vuelva a buscar el 1º short
+  					bandera = 0;
+  				}
   			}
+  			// Volvemos a ofuscar con la misma clave para poder desofuscar con la siguiente clave
   			ofuscar(fichero, num_clave);
-
   		}
 	}
 
 	public static short [] leerFichero(File file) {
-		//Lee el fichero introducido por parametro y lo almacena en un array de shorts
+		
+	//Lee el fichero introducido por parametro y lo almacena en un array de shorts
         short [] cadena = new short[(int) file.length()] ;
         BufferedInputStream lectorFichero;//Creo un objeto flujo buffer de lectura .
         try{
-            lectorFichero=new BufferedInputStream(new FileInputStream(file));//Inicializa el buffer de lectura con un objeto de tipo FileInputStream
+            lectorFichero = new BufferedInputStream(new FileInputStream(file));//Inicializa el buffer de lectura con un objeto de tipo FileInputStream
             int bytes;
-
             	for (int i = 0; i < file.length(); i++) {
             		bytes = lectorFichero.read();
                     cadena[i] = (short)bytes;	
-                
             	}
-           
             lectorFichero.close();//cerramos el lector
-
-           
         }
         catch(FileNotFoundException e){
             e.printStackTrace();//traza de excepcion
@@ -130,16 +126,18 @@ public class prueba {
 	}
 	
 	public static short [] toShort(String cadena, short [] cad){
+		
 		cad = new short [cadena.length()];
 		//Convertimos la cadena a enteros
 		for (int i = 0; i < cadena.length(); i++) {
 			cad [i] = (short)(cadena.charAt(i));
 		}
 		return cad;
-}
+	}
+	
 	public static void ofuscar(short[] txt, int clave) {
+		
 		//Algoritmo que ofusca/desofusca el vector de enters introducido
-
 		for (int i = 0; i < txt.length-1; i++) { // Recorre el vector txt
 			int w0, w1, b;
 			w0 = clave % 256; // Almacenamos en w0 el resto de (clave / 256).
@@ -155,6 +153,5 @@ public class prueba {
 			txt[i] = (short) b; 
 			clave = (clave + 1) % 65536; 
 		}
-
 	}
 }
