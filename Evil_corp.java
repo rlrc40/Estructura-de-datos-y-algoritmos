@@ -1,4 +1,3 @@
-package evilCorp;
 //Se ha presupuesto que la cadena a buscar debe ser evil.corp@mad.org 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -18,7 +17,7 @@ public class Evil_corp {
 	final static String cadena = "evil.corp@mad.org";//Cadena a buscar
 	final static String rutaFichOrigen = "prueba1.mbx";//Ruta al fichero de origen
 	
-	// Permutación directa
+	// PermutaciÃ³n directa
 	final static int[] vPR = new int[] { 65, 54, 19, 98, 168, 33, 110, 187, 244, 22, 204, 4, 127, 100, 232, 93, 30, 242,
 			203, 42, 116, 197, 94, 53, 210, 149, 71, 158, 150, 45, 154, 136, 76, 125, 132, 63, 219, 172, 49, 182, 72,
 			95, 246, 196, 216, 57, 139, 231, 35, 59, 56, 142, 200, 193, 223, 37, 177, 32, 165, 70, 96, 78, 156, 251,
@@ -32,7 +31,7 @@ public class Evil_corp {
 			236, 174, 3, 161, 20, 123, 169, 11, 255, 248, 163, 192, 162, 1, 247, 46, 188, 36, 104, 117, 13, 254, 186,
 			47, 181, 208, 218, 61 };
 
-	// Permutación inversa vPR[vPI[i]] = i, vPI[vPR[i]] = i
+	// PermutaciÃ³n inversa vPR[vPI[i]] = i, vPI[vPR[i]] = i
 	final static int[] vPI = new int[] { 71, 241, 180, 230, 11, 106, 114, 72, 133, 78, 158, 235, 226, 248, 148, 83, 224,
 			187, 160, 2, 232, 90, 9, 171, 219, 227, 186, 198, 124, 195, 16, 221, 57, 5, 150, 48, 245, 55, 96, 130, 140,
 			201, 19, 74, 107, 29, 243, 251, 143, 38, 151, 202, 145, 23, 1, 196, 50, 45, 110, 49, 149, 255, 217, 35, 209,
@@ -46,7 +45,7 @@ public class Evil_corp {
 			168, 47, 14, 129, 101, 115, 228, 194, 162, 138, 212, 225, 17, 208, 8, 139, 42, 242, 237, 154, 100, 63, 193,
 			108, 249, 236 };
 
-	// Autopermutación vPS[vPS[i]] = i
+	// AutopermutaciÃ³n vPS[vPS[i]] = i
 	final static int[] vPS = new int[] { 20, 83, 15, 86, 179, 200, 122, 156, 235, 101, 72, 23, 22, 21, 159, 2, 204, 84,
 			124, 131, 0, 13, 12, 11, 162, 98, 168, 118, 219, 217, 237, 199, 197, 164, 220, 172, 133, 116, 214, 208, 167,
 			155, 174, 154, 150, 113, 102, 195, 99, 153, 184, 221, 115, 146, 142, 132, 125, 165, 94, 209, 93, 147, 177,
@@ -74,8 +73,8 @@ public class Evil_corp {
 	
 	public static String buscarCadena(short[] fichero, short[] cadenaShort){
 		
-		// Recibe dos array de shorts y busca la secuencia del 2º en el 1º
-	    int bandera; // Se declara una bandera para controlar el indice del 2º array
+		// Recibe dos array de shorts y busca la secuencia del 2Âº en el 1Âº
+	    int bandera; // Se declara una bandera para controlar el indice del 2Âº array
 	    String cadenaFinal = "";
   		for (int num_clave = 0; num_clave < 65536; num_clave++) {
   			// Desofuscamos el array del fichero con la clave num_clave
@@ -84,13 +83,13 @@ public class Evil_corp {
   			bandera = 0;
   			// Vamos recorriendo el array del fichero buscando en orden cada caracter de la cadena a buscar
   			for (int i = 0; i < fichero.length; i++) {
-  				// Con esto, incrementamos la bandera para buscar el siguiente short del 2º array
+  				// Con esto, incrementamos la bandera para buscar el siguiente short del 2Âº array
   				if (fichero[i] == cadenaShort[bandera]) {
   					bandera++;
-  					// Si la bandera ya corresponde al ultimo short del 2º array devolvemos la posicion y la clave actuales, 
+  					// Si la bandera ya corresponde al ultimo short del 2Âº array devolvemos la posicion y la clave actuales, 
   					// y traducimos e imprimimos la cadena correspondiente, desde la posicion -100 hasta la posicion +500
   					if (bandera==cadenaShort.length) {
-  						cadenaFinal += "\n" + "Posición: " + (i - bandera + 1) + "  Clave: " + num_clave + "\n";
+  						cadenaFinal += "\n" + "PosiciÃ³n: " + (i - bandera + 1) + "  Clave: " + num_clave + "\n";
 						for (int j = i-100; j < i+500; j++) {
 							// Comprobamos que la cadena a mostrar este dentro de un rango valido
 							if(j >= 0 && j < fichero.length){
@@ -102,7 +101,7 @@ public class Evil_corp {
 						bandera = 0;
   					}	
   				}else{
-  					// Si no se a encontrado el correspondiente short reiniciamos la bandera para que vuelva a buscar el 1º short
+  					// Si no se a encontrado el correspondiente short reiniciamos la bandera para que vuelva a buscar el 1Âº short
   					bandera = 0;
   				}
   			}
