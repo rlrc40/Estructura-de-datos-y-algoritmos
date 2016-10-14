@@ -1,12 +1,24 @@
-import java.io.DataInputStream;
+package evilCorp;
+//Se ha presupuesto que la cadena a buscar debe ser evil.corp@mad.org 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * 
+ * @author Raul Rodriguez Carracedo
+ * @author Antonio Roman Lopez
+ *
+ */
 public class Evil_corp {
 
-	// PermutaciÃ³n directa
-
+	//Constantes globales
+	final static String cadena = "evil.corp@mad.org";//Cadena a buscar
+	final static String rutaFichOrigen = "prueba1.mbx";//Ruta al fichero de origen
+	
+	// Permutación directa
 	final static int[] vPR = new int[] { 65, 54, 19, 98, 168, 33, 110, 187, 244, 22, 204, 4, 127, 100, 232, 93, 30, 242,
 			203, 42, 116, 197, 94, 53, 210, 149, 71, 158, 150, 45, 154, 136, 76, 125, 132, 63, 219, 172, 49, 182, 72,
 			95, 246, 196, 216, 57, 139, 231, 35, 59, 56, 142, 200, 193, 223, 37, 177, 32, 165, 70, 96, 78, 156, 251,
@@ -20,8 +32,7 @@ public class Evil_corp {
 			236, 174, 3, 161, 20, 123, 169, 11, 255, 248, 163, 192, 162, 1, 247, 46, 188, 36, 104, 117, 13, 254, 186,
 			47, 181, 208, 218, 61 };
 
-	// PermutaciÃ³n inversa vPR[vPI[i]] = i, vPI[vPR[i]] = i
-
+	// Permutación inversa vPR[vPI[i]] = i, vPI[vPR[i]] = i
 	final static int[] vPI = new int[] { 71, 241, 180, 230, 11, 106, 114, 72, 133, 78, 158, 235, 226, 248, 148, 83, 224,
 			187, 160, 2, 232, 90, 9, 171, 219, 227, 186, 198, 124, 195, 16, 221, 57, 5, 150, 48, 245, 55, 96, 130, 140,
 			201, 19, 74, 107, 29, 243, 251, 143, 38, 151, 202, 145, 23, 1, 196, 50, 45, 110, 49, 149, 255, 217, 35, 209,
@@ -35,8 +46,7 @@ public class Evil_corp {
 			168, 47, 14, 129, 101, 115, 228, 194, 162, 138, 212, 225, 17, 208, 8, 139, 42, 242, 237, 154, 100, 63, 193,
 			108, 249, 236 };
 
-	// AutopermutaciÃ³n vPS[vPS[i]] = i
-
+	// Autopermutación vPS[vPS[i]] = i
 	final static int[] vPS = new int[] { 20, 83, 15, 86, 179, 200, 122, 156, 235, 101, 72, 23, 22, 21, 159, 2, 204, 84,
 			124, 131, 0, 13, 12, 11, 162, 98, 168, 118, 219, 217, 237, 199, 197, 164, 220, 172, 133, 116, 214, 208, 167,
 			155, 174, 154, 150, 113, 102, 195, 99, 153, 184, 221, 115, 146, 142, 132, 125, 165, 94, 209, 93, 147, 177,
@@ -51,110 +61,107 @@ public class Evil_corp {
 			121, 126, 178, 138 };
 
 	public static void main(String args[]) {
-
-		//fichero a leer
-		File file = new File("prueba1.mbx");
 		
-		//Cadena a buscar
-		String cadena = "extre";
+        File ficheroOrigen = new File(rutaFichOrigen);//Creamos objeto de tipo fichero con la ruta orig
+		short [] fichero =  leerFichero(ficheroOrigen);
+        
+		short [] cadenaShort = null; //Cadena a buscar
+        cadenaShort = toShort(cadena, cadenaShort);
 		
-		//Pasamos la cadena a un array de shorts
-		short [] cad = null;
-		cad = toShort(cadena, cad);
+        //Imprimimos el reslutado de la busqueda
+        System.out.println(buscarCadena(fichero,cadenaShort));
+    }
+	
+	public static String buscarCadena(short[] fichero, short[] cadenaShort){
 		
-		//Array de shorts en el que almacenamos la informacion del fichero en enteros.
-		short [] fichero = leerFichero(file);
-		
-		//Repetimos el proceso de ofuscar tantas veces como claves queramos usar
-		for (int num_clave = 0; num_clave < 65536; num_clave++) {
-			ofuscar(fichero, num_clave);
-			int band = 0;
-			for (int i = 0; i < fichero.length; i++) {
-				//for (int j = 0; j < fichero.length; j++) {
-					if (fichero[i] == cad[band]) {
-						//i++;
-						band++;
-						if (band==4) {
-							System.out.println("extre");
-							band = 0;
+		// Recibe dos array de shorts y busca la secuencia del 2º en el 1º
+	    int bandera; // Se declara una bandera para controlar el indice del 2º array
+	    String cadenaFinal = "";
+  		for (int num_clave = 0; num_clave < 65536; num_clave++) {
+  			// Desofuscamos el array del fichero con la clave num_clave
+  			ofuscar(fichero, num_clave);
+  			// Establecemos la bandera a cero cada vez que se cambia de clave
+  			bandera = 0;
+  			// Vamos recorriendo el array del fichero buscando en orden cada caracter de la cadena a buscar
+  			for (int i = 0; i < fichero.length; i++) {
+  				// Con esto, incrementamos la bandera para buscar el siguiente short del 2º array
+  				if (fichero[i] == cadenaShort[bandera]) {
+  					bandera++;
+  					// Si la bandera ya corresponde al ultimo short del 2º array devolvemos la posicion y la clave actuales, 
+  					// y traducimos e imprimimos la cadena correspondiente, desde la posicion -100 hasta la posicion +500
+  					if (bandera==cadenaShort.length) {
+  						cadenaFinal += "\n" + "Posición: " + (i - bandera + 1) + "  Clave: " + num_clave + "\n";
+						for (int j = i-100; j < i+500; j++) {
+							// Comprobamos que la cadena a mostrar este dentro de un rango valido
+							if(j >= 0 && j < fichero.length){
+								cadenaFinal += (char)fichero[j];
+							}
 						}
-						
-					}else{
-						band = 0;
-					}
-				//}
-			}
-			//System.out.println(num_clave);
-		}
-		
-		
-
-	}
-
-	public static void ofuscar(short[] txt, int clave) {
-		// FunciÃ³n que encripta y desencripta
-
-		for (int i = 0; i < txt.length; i++) { // Recorre el vector txt
-			int w0, w1, b;
-			w0 = clave % 256; // Almacenamos en w0 el resto de (clave / 256).
-			// System.out.println(w0 + " w0");
-			w1 = clave / 256; // Almacenamos en w1 la division de (clave / 256).
-			// System.out.println(w1 + " w1");
-			b = txt[i]; // System.out.println(b);
-			b = (b + w0) % 256; // System.out.println(b);
-			b = vPR[b]; // System.out.println(b);
-			b = (b + w1) % 256; // System.out.println(b);
-			b = vPS[b]; // System.out.println(b);
-			b = (b - w1 + 256) % 256; // System.out.println(b);
-			b = vPI[b]; // System.out.println(b);
-			b = (b - w0 + 256) % 256; // System.out.println(b);
-			txt[i] = (short) b; // System.out.println(txt[i]);
-			//System.out.println(txt[i]);
-			clave = (clave + 1) % 65536; // System.out.println(clave + " pene");
-		}
-
+						System.out.println();
+						// Reiniciamos la bandera para buscar una nueva coincidencia
+						bandera = 0;
+  					}	
+  				}else{
+  					// Si no se a encontrado el correspondiente short reiniciamos la bandera para que vuelva a buscar el 1º short
+  					bandera = 0;
+  				}
+  			}
+  			// Volvemos a ofuscar con la misma clave para poder desofuscar con la siguiente clave
+  			ofuscar(fichero, num_clave);
+  		}
+		return cadenaFinal;
 	}
 
 	public static short [] leerFichero(File file) {
-		System.out.println("Reading binary file into byte array example");
-		DataInputStream insputStream = null;
-		short[] shorts = null ;
-		try {
-			// Instantiate the file object
-
-			// Instantiate the input stread
-			insputStream = new DataInputStream(new FileInputStream(file));
-			shorts = new short[(int) file.length()];
-			int cont = 0;
-
-			while (insputStream.read() != -1) {
-				shorts[cont] = (short) insputStream.readUnsignedByte();
-				//System.out.print(shorts[cont]);
-				cont++;
-			}
-
-		} catch (Exception e) {
-			System.out.println("Error is:" + e.getMessage());
-
-		} finally {
-			try {
-				if (insputStream != null) {
-					insputStream.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return shorts;
+		
+		//Lee el fichero introducido por parametro y lo almacena en un array de shorts
+        short [] cadena = new short[(int) file.length()] ;
+        BufferedInputStream lectorFichero;//Creo un objeto flujo buffer de lectura .
+        try{
+            lectorFichero = new BufferedInputStream(new FileInputStream(file));//Inicializa el buffer de lectura con un objeto de tipo FileInputStream
+            int bytes;
+            	for (int i = 0; i < file.length(); i++) {
+            		bytes = lectorFichero.read();
+                    cadena[i] = (short)bytes;	
+            	}
+            lectorFichero.close();//cerramos el lector
+        }
+        catch(FileNotFoundException e){
+            e.printStackTrace();//traza de excepcion
+        }
+        catch(IOException e){
+            e.printStackTrace();//traza de excepcion
+        }
+		return cadena;
 	}
 	
 	public static short [] toShort(String cadena, short [] cad){
+		
 		cad = new short [cadena.length()];
 		//Convertimos la cadena a enteros
 		for (int i = 0; i < cadena.length(); i++) {
 			cad [i] = (short)(cadena.charAt(i));
-			System.out.println(cad[i]);
 		}
 		return cad;
+}
+	
+	public static void ofuscar(short[] txt, int clave) {
+		
+		//Algoritmo que ofusca/desofusca el vector de enters introducido
+		for (int i = 0; i < txt.length-1; i++) { // Recorre el vector txt
+			int w0, w1, b;
+			w0 = clave % 256; // Almacenamos en w0 el resto de (clave / 256).
+			w1 = clave / 256; // Almacenamos en w1 la division de (clave / 256).
+			b = txt[i];
+			b = (b + w0) % 256;
+			b = vPR[b];
+			b = (b + w1) % 256;
+			b = vPS[b];
+			b = (b - w1 + 256) % 256;
+			b = vPI[b]; 
+			b = (b - w0 + 256) % 256; 
+			txt[i] = (short) b; 
+			clave = (clave + 1) % 65536; 
+		}
 	}
+}
