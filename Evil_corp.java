@@ -76,6 +76,8 @@ public class Evil_corp {
 		// Recibe dos array de shorts y busca la secuencia del 2º en el 1º
 	    int bandera; // Se declara una bandera para controlar el indice del 2º array
 	    String cadenaFinal = "";
+	    long inicio = 0, fin = 0, tiempoTotal = 0;
+	    inicio = System.currentTimeMillis();
   		for (int num_clave = 0; num_clave < 65536; num_clave++) {
   			// Desofuscamos el array del fichero con la clave num_clave
   			ofuscar(fichero, num_clave);
@@ -108,6 +110,10 @@ public class Evil_corp {
   			// Volvemos a ofuscar con la misma clave para poder desofuscar con la siguiente clave
   			ofuscar(fichero, num_clave);
   		}
+  		fin = System.currentTimeMillis();
+  	    tiempoTotal = fin - inicio;
+  	    System.out.println("Tiempo empleado en descifrar el fichero:"
+  	    + tiempoTotal + " milisegundos.");
 		return cadenaFinal;
 	}
 
