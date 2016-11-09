@@ -1,5 +1,6 @@
 //Se ha presupuesto que la cadena a buscar debe ser evil.corp@mad.org 
 import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,8 +15,8 @@ import java.io.IOException;
 public class Evil_corp {
 
 	//Constantes globales
-	final static String cadena = "evil.corp@mad.org";//Cadena a buscar
-	final static String rutaFichOrigen = "prueba1.mbx";//Ruta al fichero de origen
+	final static String cadena = "evil.corp";//Cadena a buscar
+	final static String rutaFichOrigen = "examen1";//Ruta al fichero de origen
 	
 	// Permutación directa
 	final static int[] vPR = new int[] { 65, 54, 19, 98, 168, 33, 110, 187, 244, 22, 204, 4, 127, 100, 232, 93, 30, 242,
@@ -78,25 +79,36 @@ public class Evil_corp {
 	    String cadenaFinal = "";
 	    long inicio = 0, fin = 0, tiempoTotal = 0;
 	    inicio = System.currentTimeMillis();
+	    short trozo[] = new short[600]; 
   		for (int num_clave = 0; num_clave < 65536; num_clave++) {
   			// Desofuscamos el array del fichero con la clave num_clave
-  			ofuscar(fichero, num_clave);
+  			ofuscar(cadenaShort, num_clave);
   			// Establecemos la bandera a cero cada vez que se cambia de clave
   			bandera = 0;
+  			
   			// Vamos recorriendo el array del fichero buscando en orden cada caracter de la cadena a buscar
   			for (int i = 0; i < fichero.length; i++) {
   				// Con esto, incrementamos la bandera para buscar el siguiente short del 2º array
   				if (fichero[i] == cadenaShort[bandera]) {
   					bandera++;
+  					//System.out.println(fichero[i] + "   " + cadenaShort[bandera] + "  " + bandera);
   					// Si la bandera ya corresponde al ultimo short del 2º array devolvemos la posicion y la clave actuales, 
   					// y traducimos e imprimimos la cadena correspondiente, desde la posicion -100 hasta la posicion +500
-  					if (bandera==cadenaShort.length) {
+  					if (bandera==cadenaShort.length-1) {
+  						int contador = 0;
   						cadenaFinal += "\n" + "Posición: " + (i - bandera + 1) + "  Clave: " + num_clave + "\n";
 						for (int j = i-100; j < i+500; j++) {
 							// Comprobamos que la cadena a mostrar este dentro de un rango valido
 							if(j >= 0 && j < fichero.length){
-								cadenaFinal += (char)fichero[j];
+								trozo[contador] = fichero[j-(cadenaShort.length)+2];
+								contador++;
 							}
+						
+						}
+						System.out.println();
+						ofuscar(trozo,num_clave-100);
+						for (int j = 0; j < trozo.length; j++) {
+							cadenaFinal += (char)trozo[j];
 						}
 						System.out.println();
 						// Reiniciamos la bandera para buscar una nueva coincidencia
@@ -108,7 +120,7 @@ public class Evil_corp {
   				}
   			}
   			// Volvemos a ofuscar con la misma clave para poder desofuscar con la siguiente clave
-  			ofuscar(fichero, num_clave);
+  			ofuscar(cadenaShort, num_clave);
   		}
   		fin = System.currentTimeMillis();
   	    tiempoTotal = fin - inicio;
@@ -118,27 +130,30 @@ public class Evil_corp {
 	}
 
 	public static short [] leerFichero(File file) {
-		
-		//Lee el fichero introducido por parametro y lo almacena en un array de shorts
-        short [] cadena = new short[(int) file.length()] ;
-        BufferedInputStream lectorFichero;//Creo un objeto flujo buffer de lectura .
-        try{
-            lectorFichero = new BufferedInputStream(new FileInputStream(file));//Inicializa el buffer de lectura con un objeto de tipo FileInputStream
-            int bytes;
-            	for (int i = 0; i < file.length(); i++) {
-            		bytes = lectorFichero.read();
-                    cadena[i] = (short)bytes;	
-            	}
-            lectorFichero.close();//cerramos el lector
-        }
-        catch(FileNotFoundException e){
-            e.printStackTrace();//traza de excepcion
-        }
-        catch(IOException e){
-            e.printStackTrace();//traza de excepcion
-        }
-		return cadena;
-	}
+		File archivo = null;
+		FileInputStream fichero = null;
+		DataInputStream datos = null;
+
+		try{ //Intentamos la creacion de los objetos necesarios para leer el fichero
+			archivo = new File("examen1.mbx"); //Directorio del archivo con los datos
+			fichero = new FileInputStream(archivo);
+			datos = new DataInputStream(fichero);
+			}
+		catch(IOException e){ //Capturamos la excepcion producida por al ausencia del fichero
+			System.out.println("No existe el fichero");
+		}
+		short[] texto = new short[(short)archivo.length()]; //Volcamos los datos del fichero en un array, siendo cada byte un entero
+		for(int i=0; i<archivo.length();i++){
+			try{
+				texto [i]=(short)datos.readUnsignedByte();
+			}
+			catch(IOException e){
+				System.out.println("Error relaccionado con el archivo, imposible leer");
+			}
+			}
+		return texto;
+		}
+	
 	
 	public static short [] toShort(String cadena, short [] cad){
 		
