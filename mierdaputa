@@ -1,4 +1,4 @@
-package evilCorp;
+
 import java.util.Arrays;
 import java.util.Hashtable;
 //Se ha presupuesto que la cadena a buscar debe ser evil.corp@mad.org 
@@ -14,7 +14,7 @@ import java.io.IOException;
  * @author Antonio Roman Lopez
  *
  */
-public class Evil_corp {
+public class Practica2{
 
 	//Constantes globales
 	final static String cadena = "evil.corp@mad.org";//Cadena a buscar
@@ -67,7 +67,6 @@ public class Evil_corp {
 	    inicio = System.currentTimeMillis();
         File ficheroOrigen = new File(rutaFichOrigen);//Creamos objeto de tipo fichero con la ruta orig
 		short [] fichero =  leerFichero(ficheroOrigen);
-		int xor = 0;
         
 		short [] cadenaShort = null; //Cadena a buscar
         cadenaShort = toShort(cadena, cadenaShort);
@@ -75,38 +74,42 @@ public class Evil_corp {
         //Imprimimos el reslutado de la busqueda
         //System.out.println(buscarCadena(fichero,cadenaShort));
         
-        Hashtable<Integer, Integer> tablaDispersion = new Hashtable<Integer, Integer>();
+        Hashtable<String, Integer> tablaDispersion = new Hashtable<String, Integer>();
         
-        int valor = 0;
-     
-        for (int i = 0; i < 65536; i++) {
+        
+        String frase = "";
+        for (int i = 1; i < 10; i++) {
+        	frase = "";
 			ofuscar(cadenaShort, i);
+			
 			for (int k = 0; k < cadenaShort.length; k++) {
-				valor = valor^(cadenaShort[k]*999);
+				frase = frase + (char)cadenaShort[k];
 			}
-			//System.out.println(valor + " " + i);
-			tablaDispersion.put(valor, i);
+			System.out.println(frase + " " + i);
+			tablaDispersion.put(frase, i);
+			
 			ofuscar(cadenaShort, i);
 		}
         
 
         short [] trozo = new short[600];
-        int[] newArray = new int[fichero.length];
-        for (int i = 2092; i < 2092+100; i++) {
+        String[] newArray = new String[fichero.length];
+        for (int i = 0; i < fichero.length; i++) {
         	
         	newArray[i] = funcionHash(Arrays.copyOfRange(fichero, i, i+cadena.length()));
+        	System.out.println(newArray[i]);
+        	
+        	if (tablaDispersion.containsKey(funcionHash(Arrays.copyOfRange(fichero, i, i+cadena.length())))) {
+				System.out.println("lel");
 
-        	if (tablaDispersion.containsKey(newArray[i])) {
-				//System.out.println("lel");
-        		
         			
-        			trozo = Arrays.copyOfRange(fichero, i, i+cadena.length());
-        			System.out.println(i);
-        			ofuscar(trozo, 63530);
+//        			trozo = Arrays.copyOfRange(fichero, i, i+cadena.length());
+//        			//System.out.println(i);
+//        			ofuscar(trozo, 63530);
 //        			System.out.println(tablaDispersion.get(newArray[i]));
-        			for (int j = 0; j < trozo.length; j++) {
-						System.out.print((char)trozo[j]);
-					}	
+//        			for (int j = 0; j < trozo.length; j++) {
+//						System.out.print((char)trozo[j]);
+//					}	
 			};
 		}
         
@@ -117,10 +120,10 @@ public class Evil_corp {
   	    + tiempoTotal + " milisegundos.");
     }
 	
-	public static int funcionHash(short[] s){
-		int valor = 0;
+	public static String funcionHash(short[] s){
+		String valor = "";
 		for (int k = 0; k < s.length; k++) {
-			valor = valor^(s[k]*999);
+			valor = valor+(char)s[k];
 		}
 		return valor;
 	}
