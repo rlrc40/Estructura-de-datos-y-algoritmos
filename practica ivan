@@ -200,3 +200,83 @@ public class prueba {
 			return end;
 		}
 	}
+
+	public static boolean checkString(short[] part, String key) {
+		for (int i = 0; i < key.length(); i++) {
+			if ((char) part[i] != key.charAt(i)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static int hashCode(short[] key) {
+		int hash = 7;
+		for (int i = 0; i < key.length; i++) {
+			hash = hash * 31 + key[i];
+		}
+		return hash;
+
+	}
+
+	public static Hashtable<Integer, Integer> prepareEDM(short[] key) {
+		Hashtable<Integer, Integer> hashTable = new Hashtable<Integer, Integer>();
+		short[] copyKey = new short[key.length];
+		for (int i = 0; i < CLAVE; i++) {
+			System.arraycopy(key, 0, copyKey, 0, copyKey.length);
+			ofuscar(copyKey, i);
+			hashTable.put(hashCode(copyKey), i);
+		}
+		return hashTable;
+	}
+
+	public static void main(String[] args) {
+		double inicio = 0, fin = 0;
+		int ofusKey = 0, hash = 0, begin = 0, end = 0;
+		short[] trozo = new short[600];
+		Hashtable<Integer, Integer> hashTable = null;
+		// Scanner teclado = new Scanner(System.in);
+		// System.out.print("Introduzca fichero a leer:");
+		// String fichero = teclado.nextLine();
+		// short[] fileData = readBinaryFile(new File(fichero.toLowerCase() +
+		// ".mbx"));
+		inicio = System.currentTimeMillis();
+		short[] fileData = readBinaryFile(new File("prueba5.mbx"));
+		// System.out.print("Introduzca palabra clave a buscar:");
+		// String word = teclado.nextLine();
+		String word = "evil.corp";
+		short[] key = stringToAscii(word);
+		hashTable = prepareEDM(key);
+		for (int i = 0; i < fileData.length; i++) {
+			hash = hashCode(Arrays.copyOfRange(fileData, i, i + key.length));
+			if (hashTable.containsKey(hash)) {
+				short[] trozoB = new short[key.length];
+				trozoB = Arrays.copyOfRange(fileData, i, i + key.length);
+				ofuscar(trozoB, hashTable.get(hash));
+				if (checkString(trozoB, word)) {
+					begin = checkBegin(i - INDICE_DEBAJO);
+					end = checkEnd(i + INDICE_ARRIBA, fileData.length);
+					trozo = Arrays.copyOfRange(fileData, begin, end);
+					ofusKey = hashTable.get(hash);
+					System.out.print("*** Pos =" + i + ", Clave = " + ofusKey
+							+ "***");
+					if (begin == 0) {
+						ofuscar(trozo, ((hashTable.get(hash) - i) + CLAVE)
+								% CLAVE);
+					} else {
+						ofuscar(trozo, ((hashTable.get(hash) - 100) + CLAVE)
+								% CLAVE);
+					}
+					for (int j = 0; j < trozo.length; j++) {
+						System.out.print((char) trozo[j]);
+					}
+					System.out.println();
+				}
+			}
+		}
+		fin = System.currentTimeMillis();
+		System.out.println("Tiempo empleado en ejecutar el programa:"
+				+ ((fin - inicio) / 1000) + " segundos.");
+		// teclado.close();
+	}
+}
