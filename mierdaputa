@@ -15,7 +15,7 @@ public class Evil_Corp2 {
 
 	// Constantes globales
 	final static String cadena = "evil.corp@mad.org";// Cadena a buscar
-	final static String rutaFichOrigen = "prueba1.mbx";// Ruta al fichero de origen
+	final static String rutaFichOrigen = "prueba2.mbx";// Ruta al fichero de origen
 
 	// Permutación directa
 	final static int[] vPR = new int[] { 65, 54, 19, 98, 168, 33, 110, 187, 244, 22, 204, 4, 127, 100, 232, 93, 30, 242,
@@ -100,9 +100,12 @@ public class Evil_Corp2 {
 				trozo = Arrays.copyOfRange(fichero, i, i + 500);
 
 				ofuscar(trozo, tablaDispersion.get(hashCode));
-				for (int j = 0; j < trozo.length; j++) {
-					System.out.print((char) trozo[j]);
+				if (comprobarCadena(trozo)) {
+					for (int j = 0; j < trozo.length; j++) {
+						System.out.print((char) trozo[j]);
+					}	
 				}
+				
 				System.out.println();
 			};
 		}
@@ -112,8 +115,19 @@ public class Evil_Corp2 {
 		System.out.println("Tiempo empleado en descifrar el fichero:" + tiempoTotal + " milisegundos.");
 	}
 
+	public static boolean comprobarCadena(int[] arr){
+		for (int i = 0; i < cadena.length(); i++) {
+			if((char)arr[i] != cadena.charAt(i)){
+				return false;
+			}
+		}
+		
+		return true;
+		
+	}
+	
 	public static int funcionHash(int[] s) {
-		int hash = 0;
+		int hash = 7;
 		for (int i = 0; i < s.length; i++) {
 			hash = (hash * 31 + s[i]);
 		}
