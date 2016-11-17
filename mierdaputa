@@ -1,12 +1,8 @@
-
 import java.util.Arrays;
 import java.util.Hashtable;
-//Se ha presupuesto que la cadena a buscar debe ser evil.corp@mad.org 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -17,10 +13,10 @@ import java.io.IOException;
  */
 public class Evil_Corp2 {
 
-	//Constantes globales
-	final static String cadena = "evil.corp@mad.org";//Cadena a buscar
-	final static String rutaFichOrigen = "prueba1.mbx";//Ruta al fichero de origen
-	
+	// Constantes globales
+	final static String cadena = "evil.corp@mad.org";// Cadena a buscar
+	final static String rutaFichOrigen = "prueba1.mbx";// Ruta al fichero de origen
+
 	// Permutación directa
 	final static int[] vPR = new int[] { 65, 54, 19, 98, 168, 33, 110, 187, 244, 22, 204, 4, 127, 100, 232, 93, 30, 242,
 			203, 42, 116, 197, 94, 53, 210, 149, 71, 158, 150, 45, 154, 136, 76, 125, 132, 63, 219, 172, 49, 182, 72,
@@ -65,101 +61,107 @@ public class Evil_Corp2 {
 
 	public static void main(String args[]) {
 		long inicio = 0, fin = 0, tiempoTotal = 0;
-	    inicio = System.currentTimeMillis();
-        File ficheroOrigen = new File(rutaFichOrigen);//Creamos objeto de tipo fichero con la ruta orig
-		int[] fichero =  leerFichero(ficheroOrigen);
+		inicio = System.currentTimeMillis();
+		File ficheroOrigen = new File(rutaFichOrigen);// Creamos objeto de tipo
+														// fichero con la ruta
+														// orig
+		int[] fichero = leerFichero(ficheroOrigen);
 
-		int[] cadenaint = null; //Cadena a buscar
-        cadenaint = toint(cadena, cadenaint);
-		
-        //Imprimimos el reslutado de la busqueda
-        //System.out.println(buscarCadena(fichero,cadenaint));
-        
-        Hashtable<Integer, Integer> tablaDispersion = new Hashtable<Integer, Integer>();
-        
-        int [] copiaCadenaInt = new int[cadena.length()];
-        for (int i = 0; i < 65536; i++) {
-        	System.arraycopy(cadenaint, 0, copiaCadenaInt, 0, copiaCadenaInt.length);;
-        	ofuscar(copiaCadenaInt, i);
-			//System.out.println(funcionHash(cadenaint) + " " + i);
+		int[] cadenaint = null; // Cadena a buscar
+		cadenaint = toint(cadena, cadenaint);
+
+		// Imprimimos el reslutado de la busqueda
+		// System.out.println(buscarCadena(fichero,cadenaint));
+
+		Hashtable<Integer, Integer> tablaDispersion = new Hashtable<Integer, Integer>();
+
+		int[] copiaCadenaInt = new int[cadenaint.length];
+
+		for (int i = 0; i < 65536; i++) {
+			// ofuscar(cadenaint, i);
+			// //System.out.println(funcionHash(cadenaint) + " " + i);
+			// tablaDispersion.put(funcionHash(cadenaint), i);
+			// ofuscar(cadenaint, i);
+
+			System.arraycopy(cadenaint, 0, copiaCadenaInt, 0, copiaCadenaInt.length);
+			ofuscar(copiaCadenaInt, i);
 			tablaDispersion.put(funcionHash(copiaCadenaInt), i);
-			//ofuscar(cadenaint, i);
 		}
-        System.out.println(tablaDispersion.size());
-        
+		//System.out.println(tablaDispersion.size());
 
-        int[] trozo = new int[600];
-        int[] newArray = new int[fichero.length];
-        for (int i = 0; i < fichero.length; i++) {  	
-        	newArray[i] = funcionHash(Arrays.copyOfRange(fichero, i, i+cadena.length()));
+		int[] trozo = new int[600];
+		// int[] newArray = new int[fichero.length];
+		int hashCode = 0;
+		for (int i = 0; i < fichero.length; i++) {
+			hashCode = funcionHash(Arrays.copyOfRange(fichero, i, i + cadena.length()));
 
-        	//System.out.println(newArray[i]);
-        	if (tablaDispersion.containsKey(newArray[i])) {
-				System.out.println("lel");
-		
-        			trozo = Arrays.copyOfRange(fichero, i, i+500);
+			// System.out.println(newArray[i]);
+			if (tablaDispersion.containsKey(hashCode)) {
+				trozo = Arrays.copyOfRange(fichero, i, i + 500);
 
-        			ofuscar(trozo, tablaDispersion.get(newArray[i]));
-        			for (int j = 0; j < trozo.length; j++) {
-						System.out.print((char)trozo[j]);
-					}	
-			};System.out.println();
+				ofuscar(trozo, tablaDispersion.get(hashCode));
+				for (int j = 0; j < trozo.length; j++) {
+					System.out.print((char) trozo[j]);
+				}
+				System.out.println();
+			};
 		}
 
-        fin = System.currentTimeMillis();
-  	    tiempoTotal = fin - inicio;
-  	    System.out.println("Tiempo empleado en descifrar el fichero:"
-  	    + tiempoTotal + " milisegundos.");
-    }
-	
-	public static int funcionHash(int[] s){
+		fin = System.currentTimeMillis();
+		tiempoTotal = fin - inicio;
+		System.out.println("Tiempo empleado en descifrar el fichero:" + tiempoTotal + " milisegundos.");
+	}
+
+	public static int funcionHash(int[] s) {
 		int hash = 0;
 		for (int i = 0; i < s.length; i++) {
-		    hash = (hash*31 + s[i]);
+			hash = (hash * 31 + s[i]);
 		}
 		return hash;
 	}
-	
 
-
-	public static int [] leerFichero(File file) {
+	public static int[] leerFichero(File file) {
 		File archivo = null;
 		FileInputStream fichero = null;
 		DataInputStream datos = null;
 
-		try{ //Intentamos la creacion de los objetos necesarios para leer el fichero
-			archivo = new File("prueba1.mbx"); //Directorio del archivo con los datos
+		try { // Intentamos la creacion de los objetos necesarios para leer el
+				// fichero
+			archivo = new File(rutaFichOrigen); // Directorio del archivo con
+												// los datos
 			fichero = new FileInputStream(archivo);
 			datos = new DataInputStream(fichero);
-			}
-		catch(IOException e){ //Capturamos la excepcion producida por al ausencia del fichero
+		} catch (IOException e) { // Capturamos la excepcion producida por al
+									// ausencia del fichero
 			System.out.println("No existe el fichero");
 		}
-		int[] texto = new int[(int)archivo.length()]; //Volcamos los datos del fichero en un array, siendo cada byte un entero
-		for(int i=0; i<archivo.length();i++){
-			try{
-				texto [i]=(int)datos.readUnsignedByte();
-			}
-			catch(IOException e){
+		int[] texto = new int[(int) archivo.length()]; // Volcamos los datos del
+														// fichero en un array,
+														// siendo cada byte un
+														// entero
+		for (int i = 0; i < archivo.length(); i++) {
+			try {
+				texto[i] = (int) datos.readUnsignedByte();
+			} catch (IOException e) {
 				System.out.println("Error relaccionado con el archivo, imposible leer");
 			}
-			}
+		}
 		return texto;
-}
-	
-	public static int[] toint(String cadena, int[] cadenaint){
-		
-		cadenaint = new int [cadena.length()];
-		//Convertimos la cadena a enteros
+	}
+
+	public static int[] toint(String cadena, int[] cadenaint) {
+
+		cadenaint = new int[cadena.length()];
+		// Convertimos la cadena a enteros
 		for (int i = 0; i < cadena.length(); i++) {
-			cadenaint [i] = (int) (cadena.charAt(i));
+			cadenaint[i] = (int) (cadena.charAt(i));
 		}
 		return cadenaint;
-}
-	
+	}
+
 	public static void ofuscar(int[] trozo, int clave) {
-		
-		//Algoritmo que ofusca/desofusca el vector de enters introducido
+
+		// Algoritmo que ofusca/desofusca el vector de enters introducido
 		for (int i = 0; i < trozo.length; i++) { // Recorre el vector txt
 			int w0, w1, b;
 			w0 = clave % 256; // Almacenamos en w0 el resto de (clave / 256).
@@ -170,10 +172,10 @@ public class Evil_Corp2 {
 			b = (b + w1) % 256;
 			b = vPS[b];
 			b = (b - w1 + 256) % 256;
-			b = vPI[b]; 
-			b = (b - w0 + 256) % 256; 
-			trozo[i] = (int) b; 
-			clave = (clave + 1) % 65536; 
+			b = vPI[b];
+			b = (b - w0 + 256) % 256;
+			trozo[i] = (int) b;
+			clave = (clave + 1) % 65536;
 		}
 	}
 }
