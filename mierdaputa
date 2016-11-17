@@ -1,4 +1,4 @@
-package evilCorp;
+
 import java.util.Arrays;
 import java.util.Hashtable;
 //Se ha presupuesto que la cadena a buscar debe ser evil.corp@mad.org 
@@ -15,7 +15,7 @@ import java.io.IOException;
  * @author Antonio Roman Lopez
  *
  */
-public class Evil_corp {
+public class Evil_Corp2 {
 
 	//Constantes globales
 	final static String cadena = "evil.corp@mad.org";//Cadena a buscar
@@ -77,12 +77,13 @@ public class Evil_corp {
         
         Hashtable<Integer, Integer> tablaDispersion = new Hashtable<Integer, Integer>();
         
-
+        int [] copiaCadenaInt = new int[cadena.length()];
         for (int i = 0; i < 65536; i++) {
-        	ofuscar(cadenaint, i);
+        	System.arraycopy(cadenaint, 0, copiaCadenaInt, 0, copiaCadenaInt.length);;
+        	ofuscar(copiaCadenaInt, i);
 			//System.out.println(funcionHash(cadenaint) + " " + i);
-			tablaDispersion.put(funcionHash(cadenaint), i);
-			ofuscar(cadenaint, i);
+			tablaDispersion.put(funcionHash(copiaCadenaInt), i);
+			//ofuscar(cadenaint, i);
 		}
         System.out.println(tablaDispersion.size());
         
@@ -102,7 +103,7 @@ public class Evil_corp {
         			for (int j = 0; j < trozo.length; j++) {
 						System.out.print((char)trozo[j]);
 					}	
-			};
+			};System.out.println();
 		}
 
         fin = System.currentTimeMillis();
