@@ -129,8 +129,10 @@ public class ostias {
 			if (tablaDispersion.containsKey(hashCode)) {
 
 				trozo2 = Arrays.copyOfRange(fichero, i, i + cadena.length());
-
+				
 				ofuscar(trozo2, tablaDispersion.get(hashCode));
+				System.out.println();
+				System.out.println("Posicion: " + i + "  Clave: " + tablaDispersion.get(hashCode));
 				if (comprobarCadena(trozo2)) {
 					if (i - 100 < 0) {
 						trozo = Arrays.copyOfRange(fichero, 0, i + 500);
